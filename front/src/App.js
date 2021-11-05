@@ -7,6 +7,8 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 
+import MenuBar from './menuBar'
+
 function App() {
   const { emit, finish, end } = window
   const [isLoading, setIsLoading] = useState(false)
@@ -61,85 +63,55 @@ function App() {
         display="flex"
         flexDirection='column'
       >
+        <MenuBar
+          closeWindow={closeWindow}
+        />
         <Box
+          flex={1}
           sx={{
-            display: "flex",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            justifyContent: 'flex-start',
-            alignItems: "flex-start",
             width: "100%",
+            textAlign: 'center',
+            paddingTop: "30px",
+            display: "flex",
+            justifyContent: "center",
           }}
-          bgcolor="#262626"
         >
-          <Tooltip
-            title="Close"
-            onClick={closeWindow}
-            arrow
-            TransitionComponent={Zoom}
-          >
-            <IconButton size="small">
-              <Box
-                sx={{
-                  borderRadius: '50%',
-                  height: "16px",
-                  width: "16px",
-                  margin: "2px",
-                  transition: "0.5s",
-                  ":hover": {
-                    bgcolor: "#FEBC2E",
-
-                  }
-                }}
-                bgcolor="#FF5F57"
-              >
-              </Box>
-          </IconButton>
-        </Tooltip>
+          <h2 style={{
+            color: "#E5E5E5",
+            userSelect: "none",
+          }}>
+            Image resizer
+          </h2>
+        </Box>
+        <Box
+          flex={2}
+          width="100%"
+          textAlign="center"
+          bgcolor="#E5E5E5"
+          display='flex'
+          justifyContent="center"
+          alignItems="center"
+          onClick={handleFile}
+          sx={{
+            marginBottom: "20px",
+            borderRadius: 1,
+            cursor: "pointer"
+          }}
+          style={{
+            userSelect: "none"
+          }}
+        >
+          {isLoading ? (
+            <p>
+              Processing ...
+            </p>
+          ) : (
+            <p>
+              Ajouter un fichier
+            </p>
+          )}
+        </Box>
       </Box>
-      <Box
-        flex={1}
-        sx={{
-          width: "100%",
-          textAlign: 'center',
-          paddingTop: "30px",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <h2 style={{
-          color: "#E5E5E5",
-        }}>
-          Image resizer
-        </h2>
-      </Box>
-      <Box
-        flex={2}
-        width="100%"
-        textAlign="center"
-        bgcolor="#E5E5E5"
-        display='flex'
-        justifyContent="center"
-        alignItems="center"
-        onClick={handleFile}
-        sx={{
-          marginBottom: "20px",
-          borderRadius: 1,
-          cursor: "pointer"
-        }}
-      >
-        {isLoading ? (
-          <p>
-            Processing ...
-          </p>
-        ) : (
-          <p>
-            Ajouter un fichier
-          </p>
-        )}
-      </Box>
-    </Box>
     </Container >
   );
 }
