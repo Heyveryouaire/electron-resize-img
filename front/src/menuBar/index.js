@@ -4,7 +4,10 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 
-export default function Menubar({ closeWindow }) {
+export default function Menubar({ 
+  closeWindow,
+  minimizeWindow,
+}) {
   return (
     <Box
       sx={{
@@ -22,7 +25,7 @@ export default function Menubar({ closeWindow }) {
       }}
     >
       <Tooltip
-        title="Close"
+        title="Fermer"
         onClick={closeWindow}
         arrow
         TransitionComponent={Zoom}
@@ -43,6 +46,32 @@ export default function Menubar({ closeWindow }) {
               WebkitAppRegion: "no-drag"
             }}
             bgcolor="#FF5F57"
+          >
+          </Box>
+        </IconButton>
+      </Tooltip>
+      <Tooltip
+        title="Minimiser"
+        onClick={minimizeWindow}
+        arrow
+        TransitionComponent={Zoom}
+      >
+        <IconButton size="small">
+          <Box
+            sx={{
+              borderRadius: '50%',
+              height: "16px",
+              width: "16px",
+              margin: "2px",
+              transition: "0.5s",
+              ":hover": {
+                bgcolor: "#28C840",
+              }
+            }}
+            style={{
+              WebkitAppRegion: "no-drag"
+            }}
+            bgcolor="#FEBC2E"
           >
           </Box>
         </IconButton>

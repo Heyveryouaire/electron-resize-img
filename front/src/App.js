@@ -22,6 +22,10 @@ function App() {
     emit("close")
   }
 
+  const minimizeWindow = () => {
+    emit("minimize")
+  }
+
   useEffect(() => {
     async function load() {
       const data = finish.loading
@@ -65,6 +69,7 @@ function App() {
       >
         <MenuBar
           closeWindow={closeWindow}
+          minimizeWindow={minimizeWindow}
         />
         <Box
           flex={1}
