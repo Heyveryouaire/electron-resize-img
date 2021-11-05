@@ -5,21 +5,22 @@ const HandleFile = require("./src/handleFile")
 
 function createWindow() {
     const win = new BrowserWindow({
-        width: 400,
-        height: 400,
+        width: 800, // 400 for prod
+        height: 800, // 400 for prod
         frame:false,
         icon: `${__dirname}/maximize.png`,
+        resizable: false,
         // autoHideMenuBar: true,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
         }
     })
 
-    win.loadFile('../front/build/index.html')
-    // win.loadURL('http://localhost:3000')
+    // win.loadFile('../front/build/index.html')
+    win.loadURL('http://localhost:3000')
 
     // debug : 
-    // win.webContents.openDevTools()
+    win.webContents.openDevTools()
     return win
 
 }
@@ -55,6 +56,10 @@ app.whenReady()
 
         ipcMain.on('close', () => {
             win.close()
+        })
+
+        ipcMain.on('minimize', () => {
+            win.minimize()
         })
 
     })
