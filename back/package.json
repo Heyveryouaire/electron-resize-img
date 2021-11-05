@@ -1,0 +1,17 @@
+{
+  "name": "ImageResizer",
+  "version": "1.0.0",
+  "description": "Image resizer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Mathieu",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^15.3.0",
+    "sharp": "^0.29.2"
+  }
+}
