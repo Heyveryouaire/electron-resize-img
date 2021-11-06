@@ -56,10 +56,10 @@ class HandleFile {
     }
 
     async writeFile(path) {
-        if (this.path) {
+        if (!this.path) {
             await fs.writeFile(path, this.file)
         } else {
-            await fs.writeFile(`${this.path}/`, this.file)
+            await fs.writeFile(`${this.path}/${path}`, this.file)
         }
         this.webContent.send("finish")
     }

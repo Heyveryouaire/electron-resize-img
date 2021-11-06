@@ -51,7 +51,7 @@ app.whenReady()
                 
                 await file.writeFile(saveDialog.filePath)
             }else{
-                await file.writeFile(`${file.path}/${file.name}`)
+                await file.writeFile(`${file.name}`)
             }
 
             await file.clearFile()
@@ -73,11 +73,15 @@ app.whenReady()
 
         ipcMain.on('drop', async (e, files) => {
             let isImage = /image\//
+
+            if(!file.path){
+                file.path = __dirname
+            }
             for (let f of files) {
                 if (isImage.test(f.type)) {
                     await file.openFile(f.path)
                     await file.compressFile()
-                    await file.writeFile(`${file.path}/${f.name}`)
+                    await file.writeFile(`${f.name}`)
                 }
             }
 

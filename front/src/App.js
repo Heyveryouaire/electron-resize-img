@@ -76,9 +76,8 @@ function App() {
   }
 
   useEffect(() => {
-    if (path) {
       localStorage.setItem('path', path)
-    }
+      emit("setpath", path)
   }, [path])
 
   useEffect(() => {
