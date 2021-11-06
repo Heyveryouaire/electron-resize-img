@@ -1,20 +1,30 @@
 const fs = require("fs").promises
 const sharp = require("sharp")
-
+const Store = require("electron-store")
 class HandleFile {
-    constructor(webContent, dialog) {
+    constructor(webContent, dialog, win) {
         this.webContent = webContent
         this.showOpenDialog = dialog.showOpenDialog
         this.showSaveDialog = dialog.showSaveDialog
+        this.win = win
 
         // only get one file for now ..    
         this.path
         this.file
         this.name
+
+        this.store = new Store()
+
+        this.onLoad()
+    }
+
+    async onLoad(){
+        this.webContent.send("store", this.store.get('path'))
+        this.path = this.store.get('path')
     }
 
     async openDialog() {
-        const dialog = await this.showOpenDialog({
+        const dialog = await this.showOpenDialog(this.win, {
             properties: ['openFile'],
             title: "Sélectionner une image",
             filters: [{
@@ -96,6 +106,7 @@ class HandleFile {
         }
 
         this.path = dialog.filePaths[0]
+        this.store.set('path', dialog.filePaths[0])
         this.webContent.send("targetfolder", this.path)
     }
 }

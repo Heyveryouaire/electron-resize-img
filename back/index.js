@@ -5,7 +5,7 @@ const HandleFile = require("./src/handleFile")
 
 function createWindow() {
     const win = new BrowserWindow({
-        width: 400, // 400 for prod
+        width: 800, // 400 for prod
         height: 400, // 400 for prod
         frame: false,
         icon: `${__dirname}/maximize.png`,
@@ -16,11 +16,11 @@ function createWindow() {
         }
     })
 
-    win.loadFile('./build/index.html')
-    // win.loadURL('http://localhost:3000')
+    // win.loadFile('./build/index.html')
+    win.loadURL('http://localhost:3000')
 
     // debug : 
-    // win.webContents.openDevTools()
+    win.webContents.openDevTools()
     return win
 
 }
@@ -28,88 +28,85 @@ function createWindow() {
 
 app.whenReady()
     .then(_ => {
+
         let win = createWindow()
-        const file = new HandleFile(win.webContents, dialog)
-
-        // macOs
-        app.on('activate', function () {
-            if (BrowserWindow.getAllWindows().length === 0) createWindow()
-        })
-
-        ipcMain.on('openDialog', async () => {
-            let openDialog = await file.openDialog()
-
-            if (!openDialog) return
-
-            await file.openFile(openDialog.filePaths[0])
-            await file.compressFile()
-
-            if (!file.path) {
-                let saveDialog = await file.saveDialog()
-                // process resize here...
-                if (!saveDialog) return
-                
-                await file.writeFile(saveDialog.filePath)
-            }else{
-                await file.writeFile(`${file.name}`)
-            }
-
-            await file.clearFile()
-
-            new Notification({
-                title: "Redimensionnement terminé",
-                body: `L'image à été traitée`
+        win.on('ready-to-show', () => {
+            const file = new HandleFile(win.webContents, dialog, win)
+            // macOs
+            app.on('activate', function () {
+                if (BrowserWindow.getAllWindows().length === 0) createWindow()
             })
-                .show()
-        })
 
-        ipcMain.on('close', () => {
-            win.close()
-        })
+            ipcMain.on('openDialog', async () => {
+                let openDialog = await file.openDialog()
 
-        ipcMain.on('minimize', () => {
-            win.minimize()
-        })
+                if (!openDialog) return
 
-        ipcMain.on('drop', async (e, files) => {
-            let isImage = /image\//
+                await file.openFile(openDialog.filePaths[0])
+                await file.compressFile()
 
-            if(!file.path){
-                file.path = __dirname
-            }
-            for (let f of files) {
-                if (isImage.test(f.type)) {
-                    await file.openFile(f.path)
-                    await file.compressFile()
-                    await file.writeFile(`${f.name}`)
+                if (!file.path) {
+                    let saveDialog = await file.saveDialog()
+                    // process resize here...
+                    if (!saveDialog) return
+
+                    await file.writeFile(saveDialog.filePath)
+                } else {
+                    await file.writeFile(`${file.name}`)
                 }
-            }
 
-            let filesDone = files.filter(file => isImage.test(file.type))
-
-            if (filesDone.length > 0) {
-                let sentence = "ont été traitées"
-                if (files.length === 1) {
-                    sentence = "a été traitée"
-                }
+                await file.clearFile()
 
                 new Notification({
                     title: "Redimensionnement terminé",
-                    body: `${filesDone.length}/${files.length} ${sentence}`
+                    body: `L'image à été traitée`
                 })
                     .show()
-            }
+            })
 
+            ipcMain.on('close', () => {
+                win.close()
+            })
+
+            ipcMain.on('minimize', () => {
+                win.minimize()
+            })
+
+            ipcMain.on('drop', async (e, files) => {
+                let isImage = /image\//
+
+                if (!file.path) {
+                    file.path = __dirname
+                }
+                for (let f of files) {
+                    if (isImage.test(f.type)) {
+                        await file.openFile(f.path)
+                        await file.compressFile()
+                        await file.writeFile(`${f.name}`)
+                    }
+                }
+
+                let filesDone = files.filter(file => isImage.test(file.type))
+
+                if (filesDone.length > 0) {
+                    let sentence = "ont été traitées"
+                    if (files.length === 1) {
+                        sentence = "a été traitée"
+                    }
+
+                    new Notification({
+                        title: "Redimensionnement terminé",
+                        body: `${filesDone.length}/${files.length} ${sentence}`
+                    })
+                        .show()
+                }
+
+            })
+
+            ipcMain.on('gettargetfolder', async () => {
+                await file.showOpenDirDialog()
+            })
         })
-
-        ipcMain.on('gettargetfolder', async () => {
-            await file.showOpenDirDialog()
-        })
-
-        ipcMain.on("setpath", (e, path) => {
-            file.path = path
-        })
-
 
     })
 

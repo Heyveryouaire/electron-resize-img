@@ -36,12 +36,19 @@ function App() {
   })
 
   evenement.received('cancel', () => {
+    console.log('cancel ')
     if (!isLoading) {
       setIsLoading(false)
     }
   })
 
   evenement.received('targetfolder', (e, path) => {
+    if (path) {
+      setPath(path)
+    }
+  })
+
+  evenement.received('store', (e, path) => {
     if (path) {
       setPath(path)
     }
@@ -69,18 +76,6 @@ function App() {
     } load()
 
   }, [finish])
-
-  useEffect(() => {
-    localStorage.setItem('path', path)
-    emit("setpath", path)
-  }, [path])
-
-  useEffect(() => {
-    let path = localStorage.getItem('path')
-    emit("setpath", path)
-  }, [])
-
-
 
   return (
     <Container
