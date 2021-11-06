@@ -1,5 +1,6 @@
 /back/node_modules
 /front/node_modules
 /node_modules
-/back/out
+/back/build
 /front/build
+/back/Image_resizer*

@@ -5,8 +5,8 @@ const HandleFile = require("./src/handleFile")
 
 function createWindow() {
     const win = new BrowserWindow({
-        width: 800, // 400 for prod
-        height: 800, // 400 for prod
+        width: 400, // 400 for prod
+        height: 400, // 400 for prod
         frame: false,
         icon: `${__dirname}/maximize.png`,
         resizable: false,
@@ -16,11 +16,11 @@ function createWindow() {
         }
     })
 
-    // win.loadFile('../front/build/index.html')
-    win.loadURL('http://localhost:3000')
+    win.loadFile('./build/index.html')
+    // win.loadURL('http://localhost:3000')
 
     // debug : 
-    win.webContents.openDevTools()
+    // win.webContents.openDevTools()
     return win
 
 }
