@@ -13,7 +13,7 @@ import MenuBar from './menuBar'
 function App() {
   const { emit, finish, end, targetfolder } = window
   const [isLoading, setIsLoading] = useState(false)
-  const [path, setPath] = useState("/home/mathieu/Documents/imagecompress")
+  const [path, setPath] = useState("")
 
   const handleFile = () => {
     setIsLoading(true)
@@ -150,7 +150,7 @@ function App() {
               onClick={closeWindow}
               arrow
               TransitionComponent={Zoom}
-              placement="top-start"
+              placement="top"
 
             >
               <Input
