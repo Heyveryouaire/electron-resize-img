@@ -3,8 +3,8 @@ const { contextBridge, ipcRenderer } = require("electron")
 const fs = require("fs")
 // share fs module in render process (accessible via window.fs)
 
-function sendMessage(message) {
-    ipcRenderer.send(message)
+function sendMessage(message, e) {
+    ipcRenderer.send(message, e)
 }
 
 function finish() {
@@ -16,7 +16,6 @@ function finish() {
     return loading
 }
 
-
 contextBridge.exposeInMainWorld("fs", fs)
 contextBridge.exposeInMainWorld("emit", sendMessage)
 
@@ -27,6 +26,11 @@ contextBridge.exposeInMainWorld("end", {
     }
 })
 contextBridge.exposeInMainWorld("cancel", {
+    received: (chan, func) => {
+        ipcRenderer.on(chan, func)
+    }
+})
+contextBridge.exposeInMainWorld("targetfolder", {
     received: (chan, func) => {
         ipcRenderer.on(chan, func)
     }

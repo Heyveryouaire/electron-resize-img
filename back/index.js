@@ -1,5 +1,5 @@
 const path = require("path")
-const { app, BrowserWindow, ipcMain, dialog } = require("electron")
+const { app, BrowserWindow, ipcMain, dialog, Notification } = require("electron")
 
 const HandleFile = require("./src/handleFile")
 
@@ -7,7 +7,7 @@ function createWindow() {
     const win = new BrowserWindow({
         width: 800, // 400 for prod
         height: 800, // 400 for prod
-        frame:false,
+        frame: false,
         icon: `${__dirname}/maximize.png`,
         resizable: false,
         // autoHideMenuBar: true,
@@ -49,9 +49,14 @@ app.whenReady()
             if (!saveDialog) return
 
             await file.writeFile(saveDialog.filePath)
-            
+
             await file.clearFile()
-            console.log('Image compressed')
+
+            new Notification({
+                title: "Redimensionnement terminé",
+                body: `L'image à été traitée`
+            })
+                .show()
         })
 
         ipcMain.on('close', () => {
@@ -61,6 +66,38 @@ app.whenReady()
         ipcMain.on('minimize', () => {
             win.minimize()
         })
+
+        ipcMain.on('drop', async (e, files) => {
+            let isImage = /image\//
+            for (let f of files) {
+                if (isImage.test(f.type)) {
+                    await file.openFile(f.path)
+                    await file.compressFile()
+                    await file.writeFile(`${file.path}/${f.name}`)
+                }
+            }
+
+            let filesDone = files.filter(file => isImage.test(file.type))
+
+            if (filesDone.length > 0) {
+                let sentence = "ont été traitées"
+                if (files.length === 1) {
+                    sentence = "a été traitée"
+                }
+
+                new Notification({
+                    title: "Redimensionnement terminé",
+                    body: `${filesDone.length}/${files.length} ${sentence}`
+                })
+                    .show()
+            }
+
+        })
+
+        ipcMain.on('gettargetfolder', async () => {
+            await file.showOpenDirDialog()
+        })
+
 
     })
 

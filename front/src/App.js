@@ -7,11 +7,14 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 
+import Input from '@mui/material/InputBase'
+
 import MenuBar from './menuBar'
 
 function App() {
-  const { emit, finish, end } = window
+  const { emit, finish, end, targetfolder } = window
   const [isLoading, setIsLoading] = useState(false)
+  const [path, setPath] = useState("/home/mathieu/Documents/imagecompress")
 
   const handleFile = () => {
     setIsLoading(true)
@@ -24,6 +27,10 @@ function App() {
 
   const minimizeWindow = () => {
     emit("minimize")
+  }
+
+  const getTargetFolder = () => {
+    emit("gettargetfolder")
   }
 
   useEffect(() => {
@@ -48,6 +55,26 @@ function App() {
       setIsLoading(false)
     }
   })
+
+  targetfolder.received('targetfolder', (e, path) => {
+    if (path) {
+      setPath(path)
+    }
+  })
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+
+    let files = []
+    for (let file of e.dataTransfer.files) {
+      files.push({
+        name: file.name,
+        path: file.path,
+        type: file.type
+      })
+    }
+    emit('drop', files)
+  }
 
   return (
     <Container
@@ -89,6 +116,55 @@ function App() {
           </h2>
         </Box>
         <Box
+          flex={1}
+          // bgcolor="white"
+          sx={{
+            justifyContent: "center",
+            display: "flex",
+            alignItems: 'center',
+            margin: "5px",
+            padding: "5px"
+          }}
+        >
+          <Box
+            bgcolor='#E5E5E5'
+            sx={{
+              padding: "10px",
+              borderRadius: 1,
+            }}
+          >
+
+            <Input
+              bgcolor="white"
+              placeholder="Entrer un chemin cible"
+              value={path}
+              onClick={e => {
+                e.preventDefault()
+                getTargetFolder()
+              }}
+              onChange={e => {
+                e.preventDefault()
+                setPath(e.target.value)
+              }}
+            />
+          </Box>
+
+          {/* <input
+            placeholder="Entrer un chemin cible"
+            value={path}
+            onClick={e => {
+              e.preventDefault()
+              getTargetFolder()
+
+            }}
+            onChange={e => {
+              e.preventDefault()
+            }}
+          >
+          </input> */}
+
+        </Box>
+        <Box
           flex={2}
           width="100%"
           textAlign="center"
@@ -105,6 +181,8 @@ function App() {
           style={{
             userSelect: "none"
           }}
+          onDragOver={e => e.preventDefault()}
+          onDrop={handleDrop}
         >
           {isLoading ? (
             <p>

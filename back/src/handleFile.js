@@ -30,16 +30,18 @@ class HandleFile {
     }
 
     async saveDialog() {
-        const dialog = await this.showSaveDialog({
-            title: "Enregistrer le fichier",
-            defaultPath: this.name
-        })
+        if (!this.path) {
+            const dialog = await this.showSaveDialog({
+                title: "Enregistrer le fichier",
+                defaultPath: this.name
+            })
 
-        if (dialog.canceled) {
-            this.cancel()
-            return false
+            if (dialog.canceled) {
+                this.cancel()
+                return false
+            }
+            return dialog
         }
-        return dialog
     }
 
     async openFile(path) {
@@ -54,7 +56,11 @@ class HandleFile {
     }
 
     async writeFile(path) {
-        await fs.writeFile(path, this.file)
+        if (this.path) {
+            await fs.writeFile(path, this.file)
+        } else {
+            await fs.writeFile(`${this.path}/`, this.file)
+        }
         this.webContent.send("finish")
     }
 
@@ -75,7 +81,22 @@ class HandleFile {
     async clearFile() {
         delete this.file
         delete this.name
-        delete this.path
+        // delete this.path
+    }
+
+    async showOpenDirDialog() {
+        const dialog = await this.showOpenDialog({
+            properties: ['openDirectory'],
+            title: "Sélectionner un chemin",
+        })
+
+        if (dialog.canceled) {
+            this.cancel()
+            return false
+        }
+
+        this.path = dialog.filePaths[0]
+        this.webContent.send("targetfolder", this.path)
     }
 }
 
