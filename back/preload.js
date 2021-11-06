@@ -1,6 +1,4 @@
 const { contextBridge, ipcRenderer } = require("electron")
-
-const fs = require("fs")
 // share fs module in render process (accessible via window.fs)
 
 function sendMessage(message, e) {
@@ -16,21 +14,13 @@ function finish() {
     return loading
 }
 
-contextBridge.exposeInMainWorld("fs", fs)
+// Send to renderer
+// contextBridge.exposeInMainWorld("fs", fs)
 contextBridge.exposeInMainWorld("emit", sendMessage)
-
 contextBridge.exposeInMainWorld("finish", finish)
-contextBridge.exposeInMainWorld("end", {
-    received: (chan, func) => {
-        ipcRenderer.on(chan, func)
-    }
-})
-contextBridge.exposeInMainWorld("cancel", {
-    received: (chan, func) => {
-        ipcRenderer.on(chan, func)
-    }
-})
-contextBridge.exposeInMainWorld("targetfolder", {
+
+// Events handle for renderer
+contextBridge.exposeInMainWorld('evenement', {
     received: (chan, func) => {
         ipcRenderer.on(chan, func)
     }

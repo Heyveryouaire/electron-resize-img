@@ -8,7 +8,7 @@ import InputPath from './inputPath';
 import DropInput from './dropInput';
 
 function App() {
-  const { emit, finish, end, targetfolder } = window
+  const { emit, finish, evenement } = window
   const [isLoading, setIsLoading] = useState(false)
   const [path, setPath] = useState("")
 
@@ -29,30 +29,19 @@ function App() {
     emit("gettargetfolder")
   }
 
-  useEffect(() => {
-    async function load() {
-      const data = finish.loading
-      if (data) {
-        setIsLoading(false)
-      }
-    } load()
-
-  }, [finish])
-
-
-  end.received('finish', () => {
+  evenement.received('finish', () => {
     if (!isLoading) {
       setIsLoading(false)
     }
   })
 
-  end.received('cancel', () => {
-    if (isLoading) {
+  evenement.received('cancel', () => {
+    if (!isLoading) {
       setIsLoading(false)
     }
   })
 
-  targetfolder.received('targetfolder', (e, path) => {
+  evenement.received('targetfolder', (e, path) => {
     if (path) {
       setPath(path)
     }
@@ -60,7 +49,6 @@ function App() {
 
   const handleDrop = (e) => {
     e.preventDefault()
-
     let files = []
     for (let file of e.dataTransfer.files) {
       files.push({
@@ -71,6 +59,16 @@ function App() {
     }
     emit('drop', files)
   }
+
+  useEffect(() => {
+    async function load() {
+      const data = finish.loading
+      if (data) {
+        setIsLoading(false)
+      }
+    } load()
+
+  }, [finish])
 
   useEffect(() => {
     localStorage.setItem('path', path)
