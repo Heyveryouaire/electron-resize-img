@@ -44,11 +44,15 @@ app.whenReady()
             await file.openFile(openDialog.filePaths[0])
             await file.compressFile()
 
-            let saveDialog = await file.saveDialog()
-            // process resize here...
-            if (!saveDialog) return
-
-            await file.writeFile(saveDialog.filePath)
+            if (!file.path) {
+                let saveDialog = await file.saveDialog()
+                // process resize here...
+                if (!saveDialog) return
+                
+                await file.writeFile(saveDialog.filePath)
+            }else{
+                await file.writeFile(`${file.path}/${file.name}`)
+            }
 
             await file.clearFile()
 
@@ -96,6 +100,10 @@ app.whenReady()
 
         ipcMain.on('gettargetfolder', async () => {
             await file.showOpenDirDialog()
+        })
+
+        ipcMain.on("setpath", (e, path) => {
+            file.path = path
         })
 
 

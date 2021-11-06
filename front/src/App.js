@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import './App.css';
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Zoom from '@mui/material/Zoom';
 
@@ -76,6 +75,19 @@ function App() {
     emit('drop', files)
   }
 
+  useEffect(() => {
+    if (path) {
+      localStorage.setItem('path', path)
+    }
+  }, [path])
+
+  useEffect(() => {
+    let path = localStorage.getItem('path')
+    emit("setpath", path)
+  }, [])
+
+
+
   return (
     <Container
       sx={{
@@ -134,35 +146,36 @@ function App() {
             }}
           >
 
-            <Input
-              bgcolor="white"
-              placeholder="Entrer un chemin cible"
-              value={path}
-              onClick={e => {
-                e.preventDefault()
-                getTargetFolder()
-              }}
-              onChange={e => {
-                e.preventDefault()
-                setPath(e.target.value)
-              }}
-            />
+            <Tooltip
+              title={<p style={{ fontSize: '12px' }}>Double-cliquer pour ouvrir le gestionnaire de fichier</p>}
+              onClick={closeWindow}
+              arrow
+              TransitionComponent={Zoom}
+              placement="top-start"
+
+            >
+              <Input
+                bgcolor="white"
+                placeholder="Entrer un chemin cible"
+                value={path}
+                onDoubleClick={e => {
+                  e.preventDefault()
+                  getTargetFolder()
+                }}
+                onChange={e => {
+                  e.preventDefault()
+                  setPath(e.target.value)
+                }}
+                onClick={e => {
+                  e.preventDefault()
+                }}
+
+                style={{
+                  userSelect: 'none'
+                }}
+              />
+            </Tooltip>
           </Box>
-
-          {/* <input
-            placeholder="Entrer un chemin cible"
-            value={path}
-            onClick={e => {
-              e.preventDefault()
-              getTargetFolder()
-
-            }}
-            onChange={e => {
-              e.preventDefault()
-            }}
-          >
-          </input> */}
-
         </Box>
         <Box
           flex={2}
